@@ -3,7 +3,7 @@ package guru.springframework.spring6restmvc.controller;
 
 import guru.springframework.spring6restmvc.model.Customer;
 import guru.springframework.spring6restmvc.services.CustomerService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,9 +15,11 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
-@RequestMapping("/api/v1/customer")
+@RequiredArgsConstructor
+@RequestMapping(CustomerController.CUSTOMER_PATH)
 public class CustomerController {
+    public static final String CUSTOMER_PATH = "/api/v1/customer";
+    public static final String CUSTOMER_PATH_ID = "/{id}";
     private final CustomerService customerService;
 
     @GetMapping
@@ -28,7 +30,7 @@ public class CustomerController {
         return customerService.listCustomers();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(CUSTOMER_PATH_ID)
     public Customer getCustomerById(@PathVariable UUID id) {
 
         log.debug("Get Customer by Id - in controller");
@@ -47,16 +49,16 @@ public class CustomerController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(CUSTOMER_PATH_ID)
     public ResponseEntity updateCustomerById(@PathVariable UUID id,
-                                     @RequestBody Customer customer) {
+                                             @RequestBody Customer customer) {
 
         customerService.updateCustomerById(id, customer);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(CUSTOMER_PATH_ID)
     public ResponseEntity deleteCustomerById(@PathVariable UUID id) {
 
         customerService.deleteCustomerById(id);
@@ -64,9 +66,9 @@ public class CustomerController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(CUSTOMER_PATH_ID)
     public ResponseEntity updateCustomerPatchById(@PathVariable UUID id,
-                                     @RequestBody Customer customer) {
+                                                  @RequestBody Customer customer) {
 
         customerService.patchCustomerById(id, customer);
 

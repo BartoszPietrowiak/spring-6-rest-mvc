@@ -3,7 +3,7 @@ package guru.springframework.spring6restmvc.controller;
 
 import guru.springframework.spring6restmvc.model.Beer;
 import guru.springframework.spring6restmvc.services.BeerService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,9 +15,11 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
-@RequestMapping("/api/v1/beer")
+@RequiredArgsConstructor
+@RequestMapping(BeerController.BEER_PATH)
 public class BeerController {
+    public static final String BEER_PATH = "/api/v1/beer";
+    public static final String BEER_PATH_ID = "/{id}";
     private final BeerService beerService;
 
     @GetMapping
@@ -28,7 +30,7 @@ public class BeerController {
         return beerService.listBeers();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(BEER_PATH_ID)
     public Beer getBeerById(@PathVariable UUID id) {
 
         log.debug("Get Beer by Id - in controller");
@@ -47,9 +49,9 @@ public class BeerController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(BEER_PATH_ID)
     public ResponseEntity updateBeerById(@PathVariable UUID id,
-                                     @RequestBody Beer beer) {
+                                         @RequestBody Beer beer) {
 
         beerService.updateBeerById(id, beer);
 
@@ -57,7 +59,7 @@ public class BeerController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(BEER_PATH_ID)
     public ResponseEntity deleteBeerById(@PathVariable UUID id) {
 
         beerService.deleteBeerById(id);
@@ -65,9 +67,9 @@ public class BeerController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(BEER_PATH_ID)
     public ResponseEntity updateBeerPatchId(@PathVariable UUID id,
-                                     @RequestBody Beer beer) {
+                                            @RequestBody Beer beer) {
 
         beerService.patchBeerById(id, beer);
 
