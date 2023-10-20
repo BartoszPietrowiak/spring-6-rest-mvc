@@ -29,13 +29,12 @@ public class BeerController {
 
         return beerService.listBeers();
     }
-
     @GetMapping(BEER_PATH_ID)
     public Beer getBeerById(@PathVariable UUID id) {
 
         log.debug("Get Beer by Id - in controller");
 
-        return beerService.getBeerById(id);
+        return beerService.getBeerById(id).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping
