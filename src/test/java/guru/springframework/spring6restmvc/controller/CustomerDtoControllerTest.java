@@ -122,6 +122,8 @@ class CustomerDtoControllerTest {
 
         CustomerDto customerDto = customerServiceImpl.listCustomers().get(0);
 
+        given(customerService.deleteCustomerById(any())).willReturn(true);
+
         mockMvc.perform(delete(CustomerController.CUSTOMER_PATH + "/"  + customerDto.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
