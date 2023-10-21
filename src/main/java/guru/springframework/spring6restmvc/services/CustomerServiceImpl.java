@@ -1,6 +1,6 @@
 package guru.springframework.spring6restmvc.services;
 
-import guru.springframework.spring6restmvc.model.Customer;
+import guru.springframework.spring6restmvc.model.CustomerDto;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -9,79 +9,83 @@ import java.util.*;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-    private final Map<UUID, Customer> customerMap = new HashMap<>();
+    private final Map<UUID, CustomerDto> customerMap = new HashMap<>();
 
     public CustomerServiceImpl() {
-        Customer customer1 = Customer.builder()
+        CustomerDto customerDto1 = CustomerDto.builder()
                 .id(UUID.randomUUID())
-                .name("Customer 1")
+                .name("CustomerDto 1")
                 .version(1)
                 .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();
-        Customer customer2 = Customer.builder()
+        CustomerDto customerDto2 = CustomerDto.builder()
                 .id(UUID.randomUUID())
-                .name("Customer 2")
+                .name("CustomerDto 2")
                 .version(1)
                 .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();
-        Customer customer3 = Customer.builder()
+        CustomerDto customerDto3 = CustomerDto.builder()
                 .id(UUID.randomUUID())
-                .name("Customer 3")
+                .name("CustomerDto 3")
                 .version(1)
                 .createdDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();
 
-        customerMap.put(customer1.getId(), customer1);
-        customerMap.put(customer2.getId(), customer2);
-        customerMap.put(customer3.getId(), customer3);
+        customerMap.put(customerDto1.getId(), customerDto1);
+        customerMap.put(customerDto2.getId(), customerDto2);
+        customerMap.put(customerDto3.getId(), customerDto3);
     }
 
     @Override
-    public Optional<Customer> getCustomerById(UUID id) {
+    public Optional<CustomerDto> getCustomerById(UUID id) {
         return Optional.of(customerMap.get(id));
     }
 
     @Override
-    public List<Customer> listCustomers() {
+    public List<CustomerDto> listCustomers() {
         return new ArrayList<>(customerMap.values());
     }
 
     @Override
-    public Customer saveCustomer(Customer customer) {
-        customer.setId(UUID.randomUUID());
-        customer.setCreatedDate(LocalDateTime.now());
-        customer.setUpdateDate(LocalDateTime.now());
+    public CustomerDto saveCustomer(CustomerDto customerDto) {
+        customerDto.setId(UUID.randomUUID());
+        customerDto.setCreatedDate(LocalDateTime.now());
+        customerDto.setUpdateDate(LocalDateTime.now());
 
-        customerMap.put(customer.getId(), customer);
-        return customer;
+        customerMap.put(customerDto.getId(), customerDto);
+        return customerDto;
     }
 
     @Override
-    public void updateCustomerById(UUID id, Customer customer) {
-        Customer existingCustomer = customerMap.get(id);
+    public Optional<CustomerDto> updateCustomerById(UUID id, CustomerDto customerDto) {
+        CustomerDto existingCustomerDto = customerMap.get(id);
 
-        existingCustomer.setName(customer.getName());
-        existingCustomer.setUpdateDate(LocalDateTime.now());
+        existingCustomerDto.setName(customerDto.getName());
+        existingCustomerDto.setUpdateDate(LocalDateTime.now());
 
-        customerMap.put(id, existingCustomer);
+        customerMap.put(id, existingCustomerDto);
+
+        return Optional.of(existingCustomerDto);
     }
 
     @Override
-    public void deleteCustomerById(UUID id) {
+    public boolean deleteCustomerById(UUID id) {
         customerMap.remove(id);
+
+        return true;
     }
 
     @Override
-    public void patchCustomerById(UUID id, Customer customer) {
-        Customer existedCustomer = customerMap.get(id);
+    public void patchCustomerById(UUID id, CustomerDto customerDto) {
+        CustomerDto existedCustomerDto = customerMap.get(id);
 
-        if (StringUtils.hasText(customer.getName())) {
-            existedCustomer.setName(customer.getName());
+        if (StringUtils.hasText(customerDto.getName())) {
+            existedCustomerDto.setName(customerDto.getName());
         }
 
-        customerMap.put(id, existedCustomer);
+        customerMap.put(id, existedCustomerDto);
     }
 }

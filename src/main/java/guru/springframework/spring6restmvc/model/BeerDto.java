@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class Beer {
+public class BeerDto {
     private UUID id;
     private Integer version;
     private String beerName;
@@ -19,5 +19,4 @@ public class Beer {
     private Integer quantityOnHand;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
-
 }

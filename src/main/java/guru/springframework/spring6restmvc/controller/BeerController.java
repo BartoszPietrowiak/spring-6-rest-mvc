@@ -1,7 +1,7 @@
 package guru.springframework.spring6restmvc.controller;
 
 
-import guru.springframework.spring6restmvc.model.Beer;
+import guru.springframework.spring6restmvc.model.BeerDto;
 import guru.springframework.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,24 +23,25 @@ public class BeerController {
     private final BeerService beerService;
 
     @GetMapping
-    public List<Beer> listBeers() {
+    public List<BeerDto> listBeers() {
 
         log.debug("List beers - in controller");
 
         return beerService.listBeers();
     }
-    @GetMapping(BEER_PATH_ID)
-    public Beer getBeerById(@PathVariable UUID id) {
 
-        log.debug("Get Beer by Id - in controller");
+    @GetMapping(BEER_PATH_ID)
+    public BeerDto getBeerById(@PathVariable UUID id) {
+
+        log.debug("Get BeerDto by Id - in controller");
 
         return beerService.getBeerById(id).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping
-    public ResponseEntity saveBeer(@RequestBody Beer beer) {
+    public ResponseEntity saveBeer(@RequestBody BeerDto beer) {
 
-        Beer savedBeer = beerService.saveBeer(beer);
+        BeerDto savedBeer = beerService.saveBeer(beer);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "api/v1/beer/" + savedBeer.getId().toString());
@@ -50,9 +51,11 @@ public class BeerController {
 
     @PutMapping(BEER_PATH_ID)
     public ResponseEntity updateBeerById(@PathVariable UUID id,
-                                         @RequestBody Beer beer) {
+                                         @RequestBody BeerDto beer) {
 
-        beerService.updateBeerById(id, beer);
+        if (beerService.updateBeerById(id, beer).isEmpty()) {
+            throw new NotFoundException();
+        }
 
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -61,14 +64,16 @@ public class BeerController {
     @DeleteMapping(BEER_PATH_ID)
     public ResponseEntity deleteBeerById(@PathVariable UUID id) {
 
-        beerService.deleteBeerById(id);
+        if (!beerService.deleteBeerById(id)) {
+            throw new NotFoundException();
+        }
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping(BEER_PATH_ID)
     public ResponseEntity updateBeerPatchId(@PathVariable UUID id,
-                                            @RequestBody Beer beer) {
+                                            @RequestBody BeerDto beer) {
 
         beerService.patchBeerById(id, beer);
 
