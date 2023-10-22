@@ -1,6 +1,9 @@
 package guru.springframework.spring6restmvc.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -21,6 +24,9 @@ public class Customer {
     private UUID id;
     @Version
     private Integer version;
+    @NotNull
+    @NotBlank
+    @Size(max=50)
     private String name;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;

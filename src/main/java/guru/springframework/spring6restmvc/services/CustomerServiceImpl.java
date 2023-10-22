@@ -79,7 +79,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void patchCustomerById(UUID id, CustomerDto customerDto) {
+    public Optional<CustomerDto> patchCustomerById(UUID id, CustomerDto customerDto) {
         CustomerDto existedCustomerDto = customerMap.get(id);
 
         if (StringUtils.hasText(customerDto.getName())) {
@@ -87,5 +87,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customerMap.put(id, existedCustomerDto);
+
+        return Optional.of(existedCustomerDto);
     }
 }

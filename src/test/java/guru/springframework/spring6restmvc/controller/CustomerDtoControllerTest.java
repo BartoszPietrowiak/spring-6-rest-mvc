@@ -68,7 +68,7 @@ class CustomerDtoControllerTest {
 
         given(customerService.getCustomerById(any(UUID.class))).willReturn(Optional.empty());
 
-        mockMvc.perform(get(CustomerController.CUSTOMER_PATH + "/"  + UUID.randomUUID()))
+        mockMvc.perform(get(CustomerController.CUSTOMER_PATH + "/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
 
@@ -78,7 +78,7 @@ class CustomerDtoControllerTest {
 
         given(customerService.getCustomerById(testCustomerDto.getId())).willReturn(Optional.of(testCustomerDto));
 
-        mockMvc.perform(get(CustomerController.CUSTOMER_PATH + "/"  + testCustomerDto.getId())
+        mockMvc.perform(get(CustomerController.CUSTOMER_PATH + "/" + testCustomerDto.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -103,12 +103,28 @@ class CustomerDtoControllerTest {
     }
 
     @Test
+    void saveCustomerNullName() throws Exception {
+        CustomerDto customerDto = CustomerDto.builder().build();
+
+
+        given(customerService.saveCustomer(any(CustomerDto.class))).willReturn(customerServiceImpl.listCustomers().get(1));
+
+        mockMvc.perform(post(CustomerController.CUSTOMER_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(customerDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andReturn();
+    }
+
+    @Test
     void updateCustomerById() throws Exception {
         CustomerDto customerDto = customerServiceImpl.listCustomers().get(0);
 
         given(customerService.updateCustomerById(any(), any())).willReturn(Optional.of(customerDto));
 
-        mockMvc.perform(put(CustomerController.CUSTOMER_PATH + "/"  + customerDto.getId())
+        mockMvc.perform(put(CustomerController.CUSTOMER_PATH + "/" + customerDto.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customerDto)))
@@ -118,13 +134,29 @@ class CustomerDtoControllerTest {
     }
 
     @Test
+    void updateCustomerByIdBlankName() throws Exception {
+        CustomerDto customerDto = customerServiceImpl.listCustomers().get(0);
+
+        customerDto.setName("");
+        given(customerService.updateCustomerById(any(), any())).willReturn(Optional.of(customerDto));
+
+        mockMvc.perform(put(CustomerController.CUSTOMER_PATH + "/" + customerDto.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(customerDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
+
+    }
+
+    @Test
     void deleteCustomerById() throws Exception {
 
         CustomerDto customerDto = customerServiceImpl.listCustomers().get(0);
 
         given(customerService.deleteCustomerById(any())).willReturn(true);
 
-        mockMvc.perform(delete(CustomerController.CUSTOMER_PATH + "/"  + customerDto.getId())
+        mockMvc.perform(delete(CustomerController.CUSTOMER_PATH + "/" + customerDto.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -142,8 +174,10 @@ class CustomerDtoControllerTest {
         Map<String, Object> customerMap = new HashMap<>();
 
         customerMap.put("name", "new Name");
+        given(customerService.patchCustomerById(any(), any())).willReturn(Optional.of(customerDto));
 
-        mockMvc.perform(patch(CustomerController.CUSTOMER_PATH + "/"  + customerDto.getId())
+
+        mockMvc.perform(patch(CustomerController.CUSTOMER_PATH + "/" + customerDto.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customerMap)))
