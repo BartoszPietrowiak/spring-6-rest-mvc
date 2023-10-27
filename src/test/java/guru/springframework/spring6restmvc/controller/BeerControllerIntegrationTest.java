@@ -57,7 +57,7 @@ class BeerControllerIntegrationTest {
     void listBeers() {
         List<BeerDto> dtos = controller.listBeers();
 
-        assertThat(dtos).hasSize(3);
+        assertThat(dtos).hasSize(2413);
     }
 
     @Test
