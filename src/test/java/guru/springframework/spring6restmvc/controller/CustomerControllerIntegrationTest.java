@@ -1,7 +1,6 @@
 package guru.springframework.spring6restmvc.controller;
 
 import guru.springframework.spring6restmvc.Spring6RestMvcApplication;
-import guru.springframework.spring6restmvc.entities.Beer;
 import guru.springframework.spring6restmvc.entities.Customer;
 import guru.springframework.spring6restmvc.mappers.CustomerMapper;
 import guru.springframework.spring6restmvc.model.CustomerDto;
